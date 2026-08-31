@@ -1,0 +1,300 @@
+/* Lourdes Work Corporation
+   Design read: modern editorial site for a marketing consultancy that also
+   sells digital products, read by prospective clients and by two compliance
+   reviewers (Stripe, Google).
+   Dials: DESIGN_VARIANCE 6 / MOTION_INTENSITY 3 / VISUAL_DENSITY 4.
+
+   Serif is used deliberately, not by default. The brief names an editorial
+   family and names serif headings, which is the documented exception. The
+   face is Newsreader, chosen specifically because it is neither of the two
+   display serifs banned as AI-favourites.
+
+   Type pairing: Newsreader (editorial serif) for headings,
+                 Geist (neo-grotesque) for body and interface.
+   Surface: warm paper, no pure white anywhere, no pure black anywhere.
+   Hand-written CSS. No framework, no build step. */
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('fonts/newsreader-variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('fonts/geist-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Tokens ─────────────────────────────────────────────
+   One warm paper family. One accent, locked. One radius.
+   Lighter surfaces read as raised, darker as recessed. */
+:root {
+  --paper:   #F2EFE5;
+  --raised:  #FCFAF4;
+  --sunken:  #E9E5D8;
+  --rule:    #DCD7C7;
+  --rule-soft: #E6E2D4;
+  --ink:     #1F1D18;
+  --ink-soft:#5B564A;
+  --accent:  #1E5348;
+  --accent-deep: #143A32;
+  --on-accent: #FCFAF4;
+  --tint:    #E4E6DC;
+
+  --lift-1: 0 1px 2px rgba(58, 48, 26, 0.05), 0 2px 6px rgba(58, 48, 26, 0.04);
+  --lift-2: 0 1px 2px rgba(58, 48, 26, 0.06), 0 6px 18px rgba(58, 48, 26, 0.07);
+  --press:  inset 0 1px 2px rgba(58, 48, 26, 0.12);
+
+  --radius: 3px;
+  --measure: 64ch;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --shell: 1160px;
+
+  --serif: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  --sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --step-0: clamp(1.0625rem, 1.02rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.17rem + 0.38vw, 1.4375rem);
+  --step-2: clamp(1.75rem, 1.55rem + 0.95vw, 2.375rem);
+  --step-3: clamp(2.25rem, 1.9rem + 1.7vw, 3.25rem);
+  --step-4: clamp(2.5rem, 2.05rem + 2.2vw, 3.75rem);
+
+  /* Warm paper grain. Sits behind content, never over text. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:   #16150F;
+    --raised:  #1F1D16;
+    --sunken:  #100F0B;
+    --rule:    #322E24;
+    --rule-soft: #262319;
+    --ink:     #EFEBDE;
+    --ink-soft:#A29C8A;
+    --accent:  #74BCA6;
+    --accent-deep: #96D2BE;
+    --on-accent: #10201B;
+    --tint:    #1D2620;
+
+    --lift-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --lift-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 22px rgba(0, 0, 0, 0.36);
+    --press:  inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image: var(--grain);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Editorial headings. Serif, restrained weight, tight tracking. ── */
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 48;
+  letter-spacing: -0.014em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+h1 { font-size: var(--step-4); font-variation-settings: 'opsz' 72; letter-spacing: -0.021em; }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-1); font-weight: 600; font-variation-settings: 'opsz' 24; letter-spacing: -0.005em; line-height: 1.25; }
+p  { margin: 0; max-width: var(--measure); text-wrap: pretty; }
+
+a { color: var(--accent); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { color: var(--accent-deep); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius); }
+
+.shell { width: 100%; max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter); }
+
+.skip {
+  position: absolute; left: -9999px;
+  background: var(--accent); color: var(--on-accent);
+  padding: 0.75rem 1rem; border-radius: var(--radius); z-index: 30;
+}
+.skip:focus { left: var(--gutter); top: 0.75rem; }
+
+/* Small-caps metadata label, set in the grotesque against the serif. */
+.label {
+  font-family: var(--sans);
+  font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── Masthead. One line, 72px. ── */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  height: 72px; display: flex; align-items: center;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: saturate(1.3) blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav .shell { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.brand {
+  font-family: var(--serif); font-weight: 600;
+  font-size: 1.3125rem; letter-spacing: -0.015em;
+  color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.brand em { font-style: normal; color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: clamp(1.125rem, 2.4vw, 2.25rem); }
+.nav-links a { color: var(--ink-soft); text-decoration: none; font-size: 0.9375rem; white-space: nowrap; }
+.nav-links a:hover { color: var(--ink); }
+@media (max-width: 640px) { .nav-links .is-secondary { display: none; } }
+
+/* ── Tactile buttons. Raised, then genuinely compress on press. ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.8125rem 1.5rem;
+  font-family: var(--sans); font-weight: 500; font-size: 0.9375rem;
+  border-radius: var(--radius); border: 1px solid transparent;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  box-shadow: var(--lift-1);
+  transition: box-shadow 0.16s ease, transform 0.1s ease, background-color 0.16s ease;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { background: var(--accent-deep); color: var(--on-accent); box-shadow: var(--lift-2); }
+.btn-quiet { background: var(--raised); border-color: var(--rule); color: var(--ink); }
+.btn-quiet:hover { border-color: var(--ink-soft); box-shadow: var(--lift-2); }
+.btn:active { transform: translateY(1px); box-shadow: var(--press); }
+
+/* ── Hero. Asymmetric, not centered. ── */
+.hero { padding-block: clamp(3.5rem, 8vw, 6.5rem) clamp(3rem, 7vw, 5.5rem); }
+.hero-grid { display: grid; gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+@media (min-width: 900px) { .hero-grid { grid-template-columns: 1.75fr 1fr; } }
+.hero p.lede {
+  font-family: var(--serif); font-size: var(--step-1);
+  font-variation-settings: 'opsz' 28; line-height: 1.45;
+  color: var(--ink-soft); margin-top: 1.75rem; max-width: 34ch;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+
+.hero-aside { display: grid; gap: 1.75rem; align-content: start; padding-top: 0.75rem; }
+.hero-aside > div { border-top: 1px solid var(--rule); padding-top: 1rem; }
+.hero-aside dt { margin-bottom: 0.4rem; }
+.hero-aside dd { margin: 0; color: var(--ink-soft); font-size: 0.9375rem; line-height: 1.55; }
+
+/* ── Section frame ── */
+.section { padding-block: clamp(3.5rem, 7vw, 6rem); border-top: 1px solid var(--rule); }
+.section-head { max-width: var(--measure); margin-bottom: clamp(2.25rem, 4vw, 3.25rem); }
+.section-head p { color: var(--ink-soft); margin-top: 1.125rem; }
+
+/* ── Services. Asymmetric stack, lead item wider. Not equal cards. ── */
+.services { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.75rem; }
+@media (min-width: 860px) {
+  .services { grid-template-columns: repeat(6, 1fr); column-gap: 3.5rem; row-gap: 3.5rem; }
+  .services > li:nth-child(1) { grid-column: span 6; }
+  .services > li:nth-child(2) { grid-column: span 3; }
+  .services > li:nth-child(3) { grid-column: span 3; }
+}
+.services > li { border-top: 1px solid var(--rule); padding-top: 1.375rem; }
+.services h3 + p { margin-top: 0.875rem; color: var(--ink-soft); }
+.services > li:nth-child(1) h3 { font-size: var(--step-2); font-weight: 500; font-variation-settings: 'opsz' 40; letter-spacing: -0.012em; }
+.services > li:nth-child(1) p { max-width: 68ch; }
+
+/* ── Products. Raised paper cards. Two-up, unequal. ── */
+.products { display: grid; gap: 1.75rem; }
+@media (min-width: 860px) { .products { grid-template-columns: 1.2fr 1fr; gap: 2rem; } }
+.product {
+  background: var(--raised); border: 1px solid var(--rule);
+  border-radius: var(--radius); box-shadow: var(--lift-1);
+  padding: clamp(1.625rem, 3vw, 2.5rem);
+}
+.product p { margin-top: 1rem; color: var(--ink-soft); }
+.product ul { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+.product li { padding-left: 1.25rem; position: relative; color: var(--ink-soft); font-size: 0.9375rem; }
+.product li::before {
+  content: ''; position: absolute; left: 0; top: 0.68em;
+  width: 9px; height: 1px; background: var(--accent);
+}
+
+/* ── Approach. Editorial prose column with a pull quote. ── */
+.approach { max-width: 66ch; display: grid; gap: 1.625rem; }
+.approach p { max-width: none; }
+.pull {
+  font-family: var(--serif); font-size: var(--step-1);
+  font-variation-settings: 'opsz' 32; line-height: 1.42;
+  color: var(--ink);
+  border-left: 2px solid var(--accent);
+  padding: 0.375rem 0 0.375rem 1.5rem;
+  margin-block: 0.5rem;
+}
+
+/* ── Contact. Recessed band. ── */
+.contact { background: var(--sunken); border-top: 1px solid var(--rule); }
+.contact-inner { padding-block: clamp(3.5rem, 7vw, 5.5rem); display: grid; gap: 2rem; }
+@media (min-width: 860px) { .contact-inner { grid-template-columns: 1fr auto; align-items: center; gap: 3.5rem; } }
+.contact p { color: var(--ink-soft); margin-top: 1rem; }
+.contact-mail {
+  display: inline-block; margin-top: 1.375rem;
+  font-family: var(--serif); font-size: var(--step-2); font-weight: 500;
+  font-variation-settings: 'opsz' 40; letter-spacing: -0.012em;
+  color: var(--accent); text-decoration: none;
+}
+.contact-mail:hover { text-decoration: underline; }
+
+/* ── Footer ── */
+.footer { border-top: 1px solid var(--rule); padding-block: 3.25rem 3.5rem; font-size: 0.9375rem; }
+.footer-grid { display: grid; gap: 2.5rem; }
+@media (min-width: 760px) { .footer-grid { grid-template-columns: 1.7fr 1fr 1fr; gap: 3.5rem; } }
+.footer h2 { font-family: var(--sans); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 1.125rem; }
+.footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6875rem; }
+.footer a { color: var(--ink-soft); text-decoration: none; }
+.footer a:hover { color: var(--ink); text-decoration: underline; }
+.footer .legal-name { font-family: var(--serif); font-size: 1.1875rem; font-weight: 600; color: var(--ink); }
+.footer .fine { color: var(--ink-soft); max-width: 44ch; margin-top: 0.75rem; }
+.footer-base { margin-top: 2.75rem; padding-top: 1.5rem; border-top: 1px solid var(--rule-soft); color: var(--ink-soft); }
+
+/* ── Legal document pages ── */
+.doc { padding-block: clamp(3rem, 6vw, 5rem) clamp(3.5rem, 7vw, 5.5rem); }
+.doc-head { max-width: var(--measure); padding-bottom: 2.25rem; border-bottom: 1px solid var(--rule); margin-bottom: 2.75rem; }
+.doc-head p { color: var(--ink-soft); margin-top: 1rem; }
+.doc-body { max-width: 66ch; }
+.doc-body h2 { font-size: var(--step-2); margin-top: 3.25rem; }
+.doc-body h2:first-child { margin-top: 0; }
+.doc-body h3 { margin-top: 2.25rem; }
+.doc-body p, .doc-body ul, .doc-body ol { margin-top: 1.0625rem; max-width: none; }
+.doc-body ul, .doc-body ol { padding-left: 1.25rem; }
+.doc-body li { margin-top: 0.5rem; }
+.doc-body li::marker { color: var(--accent); }
+.doc-body strong { font-weight: 600; }
+
+.key-terms {
+  background: var(--raised); border: 1px solid var(--rule);
+  border-radius: var(--radius); box-shadow: var(--lift-1);
+  padding: clamp(1.5rem, 3vw, 2rem); margin-top: 2.25rem;
+}
+.key-terms h2 { margin-top: 0; font-size: var(--step-1); }
+.key-terms ul { margin-top: 1rem; }
+
+.updated { color: var(--ink-soft); font-size: 0.9375rem; }
+
+/* Fill-before-publish marker. Loud on purpose. */
+.fill {
+  background: #FFF0B8; color: #57430B;
+  border-bottom: 2px solid #DCB43A; padding: 0 0.2em; font-weight: 600;
+}
+@media (prefers-color-scheme: dark) {
+  .fill { background: #453604; color: #FFE9A6; border-bottom-color: #C0A030; }
+}
