@@ -14,6 +14,7 @@ commit, and GitHub Pages publishes it.
 | `terms.html` | Terms of service |
 | `privacy.html` | Privacy policy |
 | `refunds.html` | Refunds and cancellations |
+| `thanks.html` | Landing page after the contact form is submitted without JavaScript |
 | `styles.css` | All styling, including the design tokens at the top |
 | `fonts/` | Self-hosted Newsreader and Geist |
 | `CNAME` | Tells GitHub Pages to serve this at obilourdes.com. Do not delete. |
@@ -55,6 +56,14 @@ Two reviewers read this site, so some content is not decorative.
 customer service contact, and a refund and cancellation policy, all publicly
 reachable without a password. Those live on the home page, in the footer of
 every page, and on `refunds.html`.
+
+**The contact form is the only customer service channel.** No email address
+appears anywhere on the site, deliberately, to keep it away from scrapers.
+Stripe accepts a contact form for this, but it means the form breaking is the
+same as having no contact method at all. If you change the form, test that a
+real message arrives before pushing. The access key is in `index.html`; it is
+public by necessity, so restrict it to obilourdes.com in the Web3Forms
+dashboard.
 
 **The site carries no income claims, no earnings figures and no guaranteed
 results, deliberately.** Stripe's restricted business list covers schemes
