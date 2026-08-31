@@ -266,6 +266,46 @@ a:hover { color: var(--accent-deep); }
 .footer .fine { color: var(--ink-soft); max-width: 44ch; margin-top: 0.75rem; }
 .footer-base { margin-top: 2.75rem; padding-top: 1.5rem; border-top: 1px solid var(--rule-soft); color: var(--ink-soft); }
 
+/* ── Contact form. Labels above inputs, never placeholder-as-label. ── */
+.form { display: grid; gap: 1.125rem; max-width: 30rem; }
+.field { display: grid; gap: 0.4375rem; }
+.field label { font-size: 0.875rem; font-weight: 500; color: var(--ink); }
+.field input, .field textarea {
+  font-family: var(--sans); font-size: 1rem; color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 0.6875rem 0.8125rem; width: 100%;
+  box-shadow: var(--press);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field textarea { resize: vertical; min-height: 7rem; line-height: 1.55; }
+.field input:hover, .field textarea:hover { border-color: var(--ink-soft); }
+.field input:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: var(--press), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-soft); opacity: 1; }
+.field .help { font-size: 0.8125rem; color: var(--ink-soft); }
+.field .err { font-size: 0.8125rem; color: #9A2B1E; display: none; }
+@media (prefers-color-scheme: dark) { .field .err { color: #FF9A88; } }
+.field[data-invalid="true"] input,
+.field[data-invalid="true"] textarea { border-color: #9A2B1E; }
+.field[data-invalid="true"] .err { display: block; }
+
+/* Honeypot. Hidden from people, reachable by bots. */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.form-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.form-status { font-size: 0.9375rem; margin: 0; }
+.form-status[data-state="sending"] { color: var(--ink-soft); }
+.form-status[data-state="ok"] { color: var(--accent); font-weight: 500; }
+.form-status[data-state="error"] { color: #9A2B1E; }
+@media (prefers-color-scheme: dark) { .form-status[data-state="error"] { color: #FF9A88; } }
+.btn[aria-disabled="true"] { opacity: 0.6; pointer-events: none; }
+
+.contact-grid { display: grid; gap: 2.5rem; }
+@media (min-width: 900px) { .contact-grid { grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; } }
+
 /* ── Legal document pages ── */
 .doc { padding-block: clamp(3rem, 6vw, 5rem) clamp(3.5rem, 7vw, 5.5rem); }
 .doc-head { max-width: var(--measure); padding-bottom: 2.25rem; border-bottom: 1px solid var(--rule); margin-bottom: 2.75rem; }

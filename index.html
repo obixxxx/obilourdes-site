@@ -117,13 +117,48 @@
 
   <section class="contact" id="contact">
     <div class="shell contact-inner">
-      <div>
-        <h2>Get in touch</h2>
-        <p>Tell me what you are working on and what is not working. I reply to everything, usually within two business days.</p>
-        <a class="contact-mail" href="mailto:hello@obilourdes.com">hello@obilourdes.com</a>
-      </div>
-      <div>
-        <a class="btn btn-primary" href="mailto:hello@obilourdes.com">Get in touch</a>
+      <div class="contact-grid">
+        <div>
+          <h2>Get in touch</h2>
+          <p>Tell me what you are working on and what is not working. I read everything and reply within two business days.</p>
+          <p>Use this form for consulting enquiries, questions about a guide or tool, refund requests, and anything about your data.</p>
+        </div>
+
+        <form class="form" id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+          <input type="hidden" name="access_key" value="WEB3FORMS_ACCESS_KEY">
+          <input type="hidden" name="subject" value="New enquiry from obilourdes.com">
+          <input type="hidden" name="from_name" value="obilourdes.com">
+          <input type="hidden" name="redirect" value="https://obilourdes.com/thanks.html">
+
+          <div class="hp" aria-hidden="true">
+            <label for="company-website">Leave this field empty</label>
+            <input type="text" id="company-website" name="botcheck" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="field" id="f-name">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+            <p class="err" id="e-name">Please tell me your name.</p>
+          </div>
+
+          <div class="field" id="f-email">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+            <p class="help">So I can reply. Nothing else is done with it.</p>
+            <p class="err" id="e-email">Please enter an email address I can reply to.</p>
+          </div>
+
+          <div class="field" id="f-message">
+            <label for="message">What can I help with?</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+            <p class="err" id="e-message">Please add a short message.</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="send">Send message</button>
+            <p class="form-status" id="status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
       </div>
     </div>
   </section>
@@ -161,6 +196,82 @@
     </div>
   </div>
 </footer>
+
+<script>
+// Progressive enhancement only. With JavaScript off the form still posts
+// natively to the same endpoint and lands on thanks.html.
+(function () {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+  var status = document.getElementById('status');
+  var button = document.getElementById('send');
+
+  function setInvalid(id, bad) {
+    document.getElementById(id).setAttribute('data-invalid', bad ? 'true' : 'false');
+  }
+
+  function validate() {
+    var ok = true;
+    var n = form.querySelector('#name').value.trim();
+    var e = form.querySelector('#email').value.trim();
+    var m = form.querySelector('#message').value.trim();
+    setInvalid('f-name', !n); if (!n) ok = false;
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+    setInvalid('f-email', !emailOk); if (!emailOk) ok = false;
+    setInvalid('f-message', !m); if (!m) ok = false;
+    return ok;
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    status.textContent = '';
+    status.removeAttribute('data-state');
+
+    if (!validate()) {
+      status.setAttribute('data-state', 'error');
+      status.textContent = 'Please check the fields above.';
+      var firstBad = form.querySelector('[data-invalid="true"] input, [data-invalid="true"] textarea');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+
+    button.setAttribute('aria-disabled', 'true');
+    status.setAttribute('data-state', 'sending');
+    status.textContent = 'Sending';
+
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (data) {
+        if (data && data.success) {
+          form.reset();
+          status.setAttribute('data-state', 'ok');
+          status.textContent = 'Thank you. I will reply within two business days.';
+        } else {
+          throw new Error((data && data.message) || 'send failed');
+        }
+      })
+      .catch(function () {
+        status.setAttribute('data-state', 'error');
+        status.textContent = 'That did not send. Please try again, or write to the address in the terms page.';
+      })
+      .finally(function () {
+        button.removeAttribute('aria-disabled');
+      });
+  });
+
+  ['name', 'email', 'message'].forEach(function (id) {
+    var el = form.querySelector('#' + id);
+    el.addEventListener('input', function () {
+      var wrap = el.closest('.field');
+      if (wrap.getAttribute('data-invalid') === 'true') validate();
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
